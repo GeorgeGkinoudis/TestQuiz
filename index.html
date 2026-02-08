@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OOP & Software Engineering Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .intro-section p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .start-button {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .start-button:hover {
+            background: #764ba2;
+        }
+
+        .quiz-section {
+            display: none;
+        }
+
+        .quiz-section.active {
+            display: block;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #667eea;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-number {
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f5f5f5;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .option label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #f1f8f4;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #fdf1f1;
+        }
+
+        .option.correct .checkmark {
+            color: #4caf50;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .option.incorrect .checkmark {
+            color: #f44336;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #764ba2;
+        }
+
+        .btn-next:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background: #999;
+            color: white;
+        }
+
+        .btn-prev:hover {
+            background: #666;
+        }
+
+        .results-section {
+            display: none;
+            text-align: center;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 30px 0;
+        }
+
+        .results-text {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .results-details {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .result-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #999;
+            background: white;
+        }
+
+        .result-item.correct {
+            border-left-color: #4caf50;
+        }
+
+        .result-item.incorrect {
+            border-left-color: #f44336;
+        }
+
+        .result-item-question {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .result-item-answer {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .restart-button {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .restart-button:hover {
+            background: #764ba2;
+        }
+
+        .question-counter {
+            color: #999;
+            font-size: 14px;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="intro-section" id="introSection">
+            <h1>📚 OOP & Software Engineering Quiz</h1>
+            <p>Test your knowledge on Object-Oriented Programming and Software Engineering concepts.</p>
+            <p id="questionCount"></p>
+            <button class="start-button" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div class="quiz-section" id="quizSection">
+            <h1>Quiz</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="question-counter" id="questionCounter"></div>
+            <div class="question-container">
+                <div class="question-number" id="questionNumber"></div>
+                <div class="question-text" id="questionText"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+            <div class="button-group">
+                <button class="btn btn-prev" onclick="previousQuestion()" id="prevBtn">← Previous</button>
+                <button class="btn btn-next" onclick="nextQuestion()" id="nextBtn">Next →</button>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <h1>Quiz Complete! 🎉</h1>
+            <div class="score-display" id="scoreDisplay"></div>
+            <div class="results-text" id="resultsText"></div>
+            <div class="results-details" id="resultsDetails"></div>
+            <button class="restart-button" onclick="restartQuiz()">Retake Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "What is the primary focus of Object-Oriented Programming (OOP)?",
+                options: [
+                    "Modeling real-world entities using classes and objects.",
+                    "Implementing programs in object-oriented languages.",
+                    "Cooperating groups of objects.",
+                    "Exchanging messages to achieve common objectives."
+                ],
+                correct: 0
+            },
+            {
+                question: "In Object-Oriented Programming (OOP), what do software objects primarily model?",
+                options: [
+                    "Real-world objects with attributes and behaviors.",
+                    "Abstract concepts with attributes and behaviors.",
+                    "Object's description through processes.",
+                    "The implementation of objects."
+                ],
+                correct: 0
+            },
+            {
+                question: "What do classes primarily define in Object-Oriented Programming (OOP)?",
+                options: [
+                    "The implementation of objects.",
+                    "The independent unit of an information processing system.",
+                    "A set of attributes and behavior for objects.",
+                    "The prototype for objects."
+                ],
+                correct: 2
+            },
+            {
+                question: "In Object-Oriented Programming (OOP), what does a class primarily represent?",
+                options: [
+                    "Individual objects with unique attributes.",
+                    "A generic description of a set of 'things' sharing common properties.",
+                    "Attribute values associated with a specific class instance.",
+                    "The implementation details of a specific object."
+                ],
+                correct: 1
+            },
+            {
+                question: "In Object-Oriented Programming (OOP), what is the primary purpose of having private attributes in a class?",
+                options: [
+                    "To make attributes accessible and manipulable by other objects.",
+                    "To ensure that attributes can only be seen by the owning object.",
+                    "To protect the integrity of data by hiding it from all objects.",
+                    "To simplify the coding of attributes with coded values."
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the process of creating an object from a class called in Object-Oriented Programming (OOP)?",
+                options: [
+                    "Object instantiation.",
+                    "Class instantiation.",
+                    "Attribute assignment.",
+                    "Object creation."
+                ],
+                correct: 0
+            },
+            {
+                question: "When identifying classes in Object-Oriented Analysis and Design, what should you ensure about the classes you select?",
+                options: [
+                    "They should have a wide age range.",
+                    "They should have no attributes.",
+                    "They should have independent existence of interest.",
+                    "They should have hidden attributes."
+                ],
+                correct: 2
+            },
+            {
+                question: "What are the primary operations associated with classes in Object-Oriented Programming (OOP)?",
+                options: [
+                    "CREATE, DELETE, SHOW, MODIFY",
+                    "ADD, REMOVE, RETRIEVE, UPDATE",
+                    "CREATE, DELETE, GET, SET",
+                    "ADD, DROP, FETCH, ALTER"
+                ],
+                correct: 2
+            },
+            {
+                question: "In Object-Oriented Programming (OOP), what does an interface define for an object?",
+                options: [
+                    "The internal implementation details of the object.",
+                    "The attributes associated with the object.",
+                    "The set of operations (methods) that the object can perform.",
+                    "The message content exchanged between objects."
+                ],
+                correct: 2
+            },
+            {
+                question: "What is the primary purpose of inheritance in Object-Oriented Programming (OOP)?",
+                options: [
+                    "To hide the implementation details of a class.",
+                    "To create a relationship of 'has a' between objects.",
+                    "To allow a child class to inherit data members and methods from a parent class.",
+                    "To encapsulate data within a class."
+                ],
+                correct: 2
+            },
+            {
+                question: "In the context of the Wordwise Class Model, what is one key distinction between the 'Schools' and 'Personal Callers' types of customers?",
+                options: [
+                    "Schools can only pay by credit card, while Personal Callers can pay by cash or credit card.",
+                    "Schools can request book days, while Personal Callers cannot.",
+                    "Personal Callers can apply for credit with Wordwise, while Schools cannot.",
+                    "Schools receive a discount on their purchases, while Personal Callers do not."
+                ],
+                correct: 1
+            },
+            {
+                question: "What is one key difference between an abstract class and an interface in Java?",
+                options: [
+                    "An abstract class only lists methods but does not have any code.",
+                    "An interface provides absolute abstraction and cannot have any method implementations.",
+                    "A concrete class cannot extend an abstract class.",
+                    "An abstract class can have instance variables while an interface cannot."
+                ],
+                correct: 1
+            },
+            {
+                question: "What is the primary purpose of Requirements Engineering?",
+                options: [
+                    "Code optimization",
+                    "Defining and maintaining system requirements",
+                    "System testing",
+                    "User interface design"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which UML diagram is specifically used for visualizing user interactions with a system?",
+                options: [
+                    "Class Diagram",
+                    "Sequence Diagram",
+                    "Use Case Diagram",
+                    "Activity Diagram"
+                ],
+                correct: 2
+            },
+            {
+                question: "In object-oriented design, which principle promotes the idea that objects should only expose a minimal interface to the outside world?",
+                options: [
+                    "Inheritance",
+                    "Polymorphism",
+                    "Encapsulation",
+                    "Abstraction"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following is NOT a characteristic of a good software requirement?",
+                options: [
+                    "Testable",
+                    "Ambiguous",
+                    "Feasible",
+                    "Clear"
+                ],
+                correct: 1
+            },
+            {
+                question: "In system modelling, what does a 'sequence diagram' primarily depict?",
+                options: [
+                    "The architecture of the system",
+                    "The interaction of objects over time",
+                    "The static structure of the system",
+                    "The physical deployment of components"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which design pattern provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation?",
+                options: [
+                    "Observer",
+                    "Singleton",
+                    "Iterator",
+                    "Factory"
+                ],
+                correct: 2
+            },
+            {
+                question: "What does the 'L' in the SOLID principles of object-oriented design stand for?",
+                options: [
+                    "Logic Segregation",
+                    "Liskov Substitution",
+                    "Linear Scalability",
+                    "Language Specification"
+                ],
+                correct: 1
+            },
+            {
+                question: "In which phase of software development are functional and non-functional requirements typically determined?",
+                options: [
+                    "Implementation",
+                    "Testing",
+                    "Maintenance",
+                    "Analysis"
+                ],
+                correct: 3
+            },
+            {
+                question: "What is the main advantage of using a microservices architecture?",
+                options: [
+                    "Improved performance",
+                    "Enhanced data security",
+                    "Scalability",
+                    "Simplified codebase"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which type of model would be used to represent the real-time processing of events in a system?",
+                options: [
+                    "Structural model",
+                    "State machine model",
+                    "Functional model",
+                    "Relational model"
+                ],
+                correct: 1
+            },
+            {
+                question: "In a class diagram, what does an association with a diamond at one end represent?",
+                options: [
+                    "Dependency",
+                    "Aggregation",
+                    "Composition",
+                    "Generalization"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which of the following is NOT a type of non-functional requirement?",
+                options: [
+                    "User authentication",
+                    "System performance",
+                    "Scalability",
+                    "Security standards"
+                ],
+                correct: 0
+            },
+            {
+                question: "When applying the MVC (Model-View-Controller) architectural pattern, where should business logic primarily reside?",
+                options: [
+                    "Model",
+                    "View",
+                    "Controller",
+                    "Service"
+                ],
+                correct: 0
+            },
+            {
+                question: "What does encapsulation in object-oriented programming primarily achieve?",
+                options: [
+                    "Code reusability",
+                    "Data hiding",
+                    "Inheritance",
+                    "Interface implementation"
+                ],
+                correct: 1
+            },
+            {
+                question: "In requirements engineering, what technique involves stakeholders playing the role of system users to validate requirements?",
+                options: [
+                    "Prototyping",
+                    "Surveys",
+                    "Use case analysis",
+                    "Interviews"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which UML diagram would be most appropriate for modelling the database schema of a system?",
+                options: [
+                    "Activity Diagram",
+                    "Class Diagram",
+                    "State Diagram",
+                    "Sequence Diagram"
+                ],
+                correct: 1
+            },
+            {
+                question: "In the context of software design, what is a primary benefit of using design patterns?",
+                options: [
+                    "Optimizing algorithm performance",
+                    "Providing a proven template for solving design problems",
+                    "Reducing the need for testing",
+                    "Eliminating the need for documentation"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is a key characteristic of a system following a microservices architecture?",
+                options: [
+                    "Monolithic application structure",
+                    "Shared database between services",
+                    "Small, independently deployable services",
+                    "Single technology stack for all services"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following best defines the 'abstraction' principle in object-oriented design?",
+                options: [
+                    "Hiding the internal implementation details of a class",
+                    "The ability of different classes to be treated as instances of the same class",
+                    "Breaking a complex system into simpler, smaller parts",
+                    "Inheriting properties from a base class"
+                ],
+                correct: 0
+            },
+            {
+                question: "In which phase of software development is the 'waterfall' model least flexible in terms of making changes?",
+                options: [
+                    "Requirements gathering",
+                    "Design",
+                    "Implementation",
+                    "Maintenance"
+                ],
+                correct: 3
+            },
+            {
+                question: "What does the term 'refactoring' primarily refer to in software development?",
+                options: [
+                    "Adding new features to existing code",
+                    "Modifying the software architecture",
+                    "Rewriting code to improve structure and readability without changing functionality",
+                    "Fixing bugs in the software"
+                ],
+                correct: 2
+            },
+            {
+                question: "In sequence diagrams, what does a 'lifeline' represent?",
+                options: [
+                    "The time during which an object exists",
+                    "The sequence of messages exchanged",
+                    "The lifecycle of a process",
+                    "The duration of a method call"
+                ],
+                correct: 0
+            },
+            {
+                question: "What is the primary goal of 'behavioural modelling' in system design?",
+                options: [
+                    "To define how data is stored in the system",
+                    "To illustrate the dynamic behaviour of the system",
+                    "To document the static structure of the system",
+                    "To outline the system's user interface"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which of the following is an example of a 'non-functional' requirement?",
+                options: [
+                    "User login functionality",
+                    "Database backup process",
+                    "Transaction processing speed",
+                    "Report generation feature"
+                ],
+                correct: 2
+            },
+            {
+                question: "In a 'state machine model,' what does a transition from one state to another typically depend on?",
+                options: [
+                    "The time elapsed",
+                    "The occurrence of a specific event",
+                    "The number of objects in the system",
+                    "The size of the database"
+                ],
+                correct: 1
+            },
+            {
+                question: "In the context of interface specification in software design, what is the primary purpose of defining method signatures within an interface?",
+                options: [
+                    "To specify the return types of methods",
+                    "To outline the implementation details of methods",
+                    "To describe the types of parameters methods accept",
+                    "To document the performance metrics of methods"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which aspect of system design is most directly addressed in a case study focusing on the weather station system design?",
+                options: [
+                    "User authentication methods",
+                    "Real-time data monitoring and accuracy",
+                    "Database normalization techniques",
+                    "Graphical user interface design"
+                ],
+                correct: 1
+            },
+            {
+                question: "When considering high-level architecture of systems, which architectural style focuses on breaking down the application into small, independently deployable services?",
+                options: [
+                    "Monolithic Architecture",
+                    "Microservices Architecture",
+                    "Layered Architecture",
+                    "Client-Server Architecture"
+                ],
+                correct: 1
+            },
+            {
+                question: "In the context of software engineering, what is the primary objective of conducting a post-implementation review?",
+                options: [
+                    "To gather requirements for the next phase of development",
+                    "To assess the performance and adherence to requirements of the implemented system",
+                    "To plan the deployment of the next version of the software",
+                    "To determine the budget for future development phases"
+                ],
+                correct: 1
+            },
+            {
+                question: "What is a key benefit of using state diagrams in object behaviour modelling, especially in a complex system like a weather station?",
+                options: [
+                    "They provide a detailed view of the system's database schema.",
+                    "They help in visualizing the object's state changes in response to external events.",
+                    "They focus on the layout and style of the user interface.",
+                    "They document the system's hardware requirements."
+                ],
+                correct: 1
+            },
+            {
+                question: "In programming-language theory, which statement most accurately contrasts a programming paradigm with a programming language?",
+                options: [
+                    "A paradigm is the concrete syntax of a language; a language is the set of paradigms it supports",
+                    "A paradigm is an implementation strategy chosen by the compiler; a language is the runtime system that executes it",
+                    "A paradigm is a problem-solving approach/way of thinking about programs; a language is a set of words, symbols, and rules used to write programs",
+                    "A paradigm is a set of libraries; a language is a set of data structures"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which explanation best accounts for the continued coexistence of many programming languages, and clarifies how paradigms relate to that diversity?",
+                options: [
+                    "Languages proliferate only because hardware differs; each paradigm corresponds to exactly one language",
+                    "Languages proliferate because some are tailored to specific applications and different languages embody different approaches to solving problems; a paradigm is an approach that can include many languages",
+                    "Languages proliferate because paradigms are interchangeable; any program can be translated mechanically between all paradigms without redesign",
+                    "Languages proliferate because interpreters are simpler than compilers; paradigms exist only for interpreted languages"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which mapping correctly aligns each paradigm with the characteristic 'view of a program' it promotes?",
+                options: [
+                    "Imperative → predicates/rules; Object-oriented → (math) functions; Functional → statements/procedures; Logic → interacting classes",
+                    "Imperative → statements/procedures affecting variables; Object-oriented → classes for interacting objects; Functional → (math) functions; Logic → predicates and rules of inference used to prove supplied statements",
+                    "Imperative → interacting objects; Object-oriented → statements/procedures; Functional → predicates/rules; Logic → (math) functions",
+                    "Imperative → bytecode traces; Object-oriented → grammars; Functional → symbol tables; Logic → tokens"
+                ],
+                correct: 1
+            },
+            {
+                question: "A development team wants high efficiency and low memory utilisation, but repeatedly encounters (i) difficulty reasoning about program behaviour and (ii) difficulty parallelising code because execution relies on continuously changing memory state. Which paradigm best fits this profile?",
+                options: [
+                    "Imperative / procedural programming",
+                    "Object-oriented programming",
+                    "Functional programming",
+                    "Logic programming"
+                ],
+                correct: 0
+            },
+            {
+                question: "Which statement best characterises object-oriented programming as a paradigm, including a realistic tradeoff highlighted in theory?",
+                options: [
+                    "Programs are collections of predicates and inference rules; the main risk is that I/O becomes cumbersome",
+                    "Programs are collections of objects that communicate by sending messages; while conceptually simple and productive, it can impose a steep initial learning curve and I/O may be cumbersome",
+                    "Programs are collections of functions with no variables; its main risk is low-level reasoning about memory contents",
+                    "Programs are collections of statements that continuously change memory; its main risk is a limited view of the world"
+                ],
+                correct: 1
+            },
+            {
+                question: "A research prototype aims for a small, clean notation and stronger support for reasoning, by modelling computation as functions calling each other and returning results, explicitly avoiding variables. Which paradigm is being adopted, and which limitation is most consistent with it?",
+                options: [
+                    "Imperative; limitation: slow execution due to inference",
+                    "Object-oriented; limitation: limited view of the world",
+                    "Functional; limitation: I/O is difficult and storage use can exceed imperative approaches",
+                    "Logic; limitation: low-level programming style"
+                ],
+                correct: 2
+            },
+            {
+                question: "A system is specified as: 'Represent domain knowledge as facts and rules of inference, then answer queries by proving statements supplied by the programmer.' Which paradigm is this, and which paired drawback is most consistent with it?",
+                options: [
+                    "Imperative; drawback: difficulty of parallelisation and low-level style",
+                    "Object-oriented; drawback: steep learning curve and cumbersome I/O",
+                    "Functional; drawback: difficult I/O and higher storage usage",
+                    "Logic; drawback: slow execution and a limited view of the world beyond its predicates/rules"
+                ],
+                correct: 3
+            },
+            {
+                question: "After studying major paradigms, which position is most defensible within the course's theoretical framing?",
+                options: [
+                    "There is a single best paradigm; the only rational strategy is to standardise on it for all problem domains",
+                    "The best paradigm is determined solely by syntax elegance; semantic considerations are secondary",
+                    "There is no best paradigm: no single paradigm fits all problems; humans combine models, while languages mixing many paradigm features can become overly complex",
+                    "The best paradigm is whichever has the fastest execution in microbenchmarks"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which pair of statements is jointly correct about (i) high- vs low-level languages and (ii) interpreters vs compilers?",
+                options: [
+                    "High-level languages are easier for machines; low-level languages are easier for humans. Interpreters produce object code; compilers process on the fly",
+                    "High-level languages are easier for humans (to understand/interpret/compile); low-level languages are easier for machines. Interpreters process instructions on the fly; compilers produce object code for execution",
+                    "High-level languages are defined only by having garbage collection; low-level languages are defined only by using pointers. Interpreters require BNF; compilers require rules of inference",
+                    "High-level vs low-level is determined by whether a language supports classes. Interpreters optimise code; compilers do not"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which statement most accurately captures the theoretical motivation for paradigm change and the canonical progression described in the lesson?",
+                options: [
+                    "Paradigm change happens only when new hardware appears; evolution is object-oriented → structured → modular → object-based",
+                    "Paradigm change occurs because limitations in one paradigm are addressed in another; evolution is structured → modular → object-based → object-oriented",
+                    "Paradigm change occurs because grammars become ambiguous; evolution is lexical → syntactic → semantic → optimisation",
+                    "Paradigm change is unnecessary because paradigms are equivalent under translation; evolution is irrelevant"
+                ],
+                correct: 1
+            },
+            {
+                question: "Consider a development trajectory with three phases: Phase 1: hide implementation details behind an interface (information hiding). Phase 2: define a user-defined type/class like a module with enforced encapsulation and allow multiple instances. Phase 3: add inheritance and shift emphasis toward code reuse through class hierarchies. Which labels best match Phases 1–3?",
+                options: [
+                    "Phase 1: structured; Phase 2: logic; Phase 3: functional",
+                    "Phase 1: modular; Phase 2: object-based (abstract data types); Phase 3: object-oriented",
+                    "Phase 1: functional; Phase 2: imperative; Phase 3: modular",
+                    "Phase 1: object-oriented; Phase 2: structured; Phase 3: modular"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which statement best distinguishes syntax from semantics in language definition, while also identifying a formal device used to specify semantics?",
+                options: [
+                    "Syntax specifies meaning via pre/post-conditions; semantics specifies form via BNF",
+                    "Syntax specifies program form (e.g., BNF/grammar/syntax diagrams); semantics specifies meaning of well-formed programs, and can be formalised with pre- and post-conditions",
+                    "Syntax is produced at execution-time; semantics is produced at compile-time",
+                    "Syntax concerns memory allocation; semantics concerns tokenisation"
+                ],
+                correct: 1
+            },
+            {
+                question: "A language designer says: 'First we must define how to recognise tokens (numbers, identifiers, semicolons, equals), then we define how tokens combine via a grammar (productions with terminals and non-terminals).' Which theoretical distinction is being described?",
+                options: [
+                    "Semantics vs optimisation",
+                    "Compilation vs execution",
+                    "Encapsulation vs inheritance",
+                    "Lexical rules vs syntactic rules"
+                ],
+                correct: 3
+            },
+            {
+                question: "Which description best characterises intermediate code in language translation, including a representative example?",
+                options: [
+                    "Intermediate code is a symbol table; e.g., BNF productions stored during parsing",
+                    "Intermediate code is a low-level representation such as pcode or JVM bytecode that sits between source and execution",
+                    "Intermediate code is a set of predicates and inference rules; e.g., Prolog clauses",
+                    "Intermediate code is any user-defined type; e.g., enumerations and unions"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which sequence correctly reflects the major compilation stages and the additional cross-cutting activity highlighted in theory?",
+                options: [
+                    "Lexical analysis → syntax analysis (parsing) → code generation → code optimisation; plus symbol table management",
+                    "Parsing → lexical analysis → optimisation → code generation; plus garbage collection management",
+                    "Code generation → parsing → lexical analysis → optimisation; plus module linking",
+                    "Tokenisation → inheritance → encapsulation → execution; plus reasoning support"
+                ],
+                correct: 0
+            },
+            {
+                question: "Within the imperative-programming conceptual model, which partition most correctly separates data from computation?",
+                options: [
+                    "Data: control structures and routines; Computation: variables and data types",
+                    "Data: variables and data types; Computation: assignments/expressions, control structures, and subprograms/routines",
+                    "Data: productions and non-terminals; Computation: tokens and terminals",
+                    "Data: predicates and inference rules; Computation: message passing between objects"
+                ],
+                correct: 1
+            },
+            {
+                question: "Which statement best captures the lesson's theoretical view of routines (subprograms) and their key design dimensions?",
+                options: [
+                    "A routine is a lexical token; its main dimensions are precedence and associativity",
+                    "A routine is a rules-of-inference set; it is executed by proving statements",
+                    "A routine is a module interface; it cannot be recursive and cannot accept parameters",
+                    "A routine is a program unit (a sequence of instructions), can be treated as a 5-tuple (name, scope, type, l-value, r-value), and commonly raises issues of functions vs procedures, parameter passing (by value/by reference), and recursion"
+                ],
+                correct: 3
+            },
+            {
+                question: "Which option correctly defines binding and lists the binding times explicitly treated as fundamental in the lesson?",
+                options: [
+                    "Binding is token recognition; binding times are parsing-time, optimisation-time, and link-time",
+                    "Binding is setting the value of an attribute of a program entity; binding times include language definition time, language implementation time, compile-time, and execution-time",
+                    "Binding is message passing; binding times are class-load time and garbage-collection time",
+                    "Binding is compilation; binding times include only compile-time and link-time"
+                ],
+                correct: 1
+            },
+            {
+                question: "A student claims: 'An l-value is the encoded content of a variable; an r-value is its address; referencing/dereferencing are syntax rules.' Which correction is most consistent with the theory of variables and pointers?",
+                options: [
+                    "Correct: l-value is content, r-value is address; referencing/dereferencing are parsing phases",
+                    "Incorrect: l-value and r-value are both scopes; pointer operators are code-optimisation techniques",
+                    "Incorrect: l-value is the address/location (linked to lifetime and allocation), r-value is the contents/encoded value (linked to initialisation/constants); pointer concepts include allocation/de-allocation and operators such as address-of (referencing) and de-referencing",
+                    "Correct: l-value exists only for literals; pointer operators eliminate the need for memory allocation"
+                ],
+                correct: 2
+            },
+            {
+                question: "Which statement is theoretically correct about types, the purpose of data types, and the classification of complex data types?",
+                options: [
+                    "A type is only a set of values; data types mainly exist to reduce I/O difficulty; arrays are cartesian products and records are mappings",
+                    "A type consists of a set of values and the operations on them; data types serve classification and protection (supporting abstraction, compile-time checking/resolution, and explicit specification); complex types include enumerations, aggregations as cartesian products (records/structures), mappings (arrays), and unions",
+                    "A type is a grammar production; data types exist primarily for tokenisation; unions are mappings and arrays are unions",
+                    "A type is a rule of inference; data types exist to enable message passing; records are non-terminals and arrays are terminals"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let answers = {};
+        let quizStarted = false;
+
+        function startQuiz() {
+            quizStarted = true;
+            document.getElementById('introSection').classList.remove('active');
+            document.getElementById('quizSection').classList.add('active');
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const question = quizData[currentQuestion];
+            document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1}`;
+            document.getElementById('questionText').textContent = question.question;
+            document.getElementById('questionCounter').textContent = `${currentQuestion + 1} of ${quizData.length}`;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'option';
+                input.value = index;
+                input.id = `option${index}`;
+
+                if (answers[currentQuestion] === index) {
+                    input.checked = true;
+                }
+
+                const label = document.createElement('label');
+                label.htmlFor = `option${index}`;
+                label.textContent = String.fromCharCode(65 + index) + ') ' + option;
+
+                optionDiv.appendChild(input);
+                optionDiv.appendChild(label);
+                optionsContainer.appendChild(optionDiv);
+
+                input.addEventListener('change', (e) => {
+                    answers[currentQuestion] = parseInt(e.target.value);
+                });
+            });
+
+            updateButtonStates();
+            updateProgressBar();
+        }
+
+        function updateButtonStates() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.textContent = currentQuestion === quizData.length - 1 ? 'Submit Quiz' : 'Next →';
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function nextQuestion() {
+            if (currentQuestion === quizData.length - 1) {
+                submitQuiz();
+                return;
+            }
+
+            if (answers[currentQuestion] === undefined) {
+                alert('Please select an answer before proceeding.');
+                return;
+            }
+
+            currentQuestion++;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            let correctCount = 0;
+
+            for (let i = 0; i < quizData.length; i++) {
+                if (answers[i] === quizData[i].correct) {
+                    correctCount++;
+                }
+            }
+
+            displayResults(correctCount);
+        }
+
+        function displayResults(correctCount) {
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.add('active');
+
+            const percentage = Math.round((correctCount / quizData.length) * 100);
+            document.getElementById('scoreDisplay').textContent = `${correctCount}/${quizData.length} (${percentage}%)`;
+
+            let message = '';
+            if (percentage === 100) {
+                message = '🎯 Perfect Score! Outstanding performance!';
+            } else if (percentage >= 80) {
+                message = '🌟 Excellent! You have a strong understanding.';
+            } else if (percentage >= 60) {
+                message = '👍 Good! You know the material well.';
+            } else if (percentage >= 40) {
+                message = '📚 Fair. Review the concepts and try again.';
+            } else {
+                message = '💪 Keep practicing! You\'ll improve with more study.';
+            }
+
+            document.getElementById('resultsText').textContent = message;
+
+            const detailsContainer = document.getElementById('resultsDetails');
+            detailsContainer.innerHTML = '<h3 style="margin-bottom: 15px; color: #333;">Review Your Answers</h3>';
+
+            quizData.forEach((question, index) => {
+                const resultItem = document.createElement('div');
+                const isCorrect = answers[index] === question.correct;
+                resultItem.className = `result-item ${isCorrect ? 'correct' : 'incorrect'}`;
+
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'result-item-question';
+                questionDiv.textContent = `Q${index + 1}: ${isCorrect ? '✓' : '✗'} ${question.question}`;
+
+                const answerDiv = document.createElement('div');
+                answerDiv.className = 'result-item-answer';
+
+                if (!isCorrect) {
+                    answerDiv.innerHTML = `<strong style="color: #f44336;">Your answer:</strong> ${String.fromCharCode(65 + answers[index])}. ${question.options[answers[index]]}<br>`;
+                    answerDiv.innerHTML += `<strong style="color: #4caf50;">Correct answer:</strong> ${String.fromCharCode(65 + question.correct)}. ${question.options[question.correct]}`;
+                } else {
+                    answerDiv.innerHTML = `<strong style="color: #4caf50;">Your answer:</strong> ${String.fromCharCode(65 + answers[index])}. ${question.options[answers[index]]}`;
+                }
+
+                resultItem.appendChild(questionDiv);
+                resultItem.appendChild(answerDiv);
+                detailsContainer.appendChild(resultItem);
+            });
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            answers = {};
+            quizStarted = false;
+
+            document.getElementById('introSection').classList.add('active');
+            document.getElementById('quizSection').classList.remove('active');
+            document.getElementById('resultsSection').classList.remove('active');
+        }
+
+        // Initialize question count on page load
+        window.addEventListener('load', () => {
+            document.getElementById('questionCount').textContent = `${quizData.length} questions total`;
+        });
+    </script>
+</body>
+</html>
