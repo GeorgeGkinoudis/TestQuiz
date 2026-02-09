@@ -298,7 +298,11 @@
             <h1>📚 OOP & Software Engineering Quiz</h1>
             <p>Test your knowledge on Object-Oriented Programming and Software Engineering concepts.</p>
             <p id="questionCount"></p>
-            <button class="start-button" onclick="startQuiz()">Start Quiz</button>
+            <div id="testSelector" style="display: none; margin-top: 20px;">
+                <p style="color: #333; margin-bottom: 15px; font-weight: bold;">Select a test to begin:</p>
+                <div id="testButtonsContainer" style="display: flex; flex-direction: column; gap: 10px;"></div>
+            </div>
+            <button class="start-button" onclick="showTestSelection()" id="startBtn">Start Quiz</button>
         </div>
 
         <div class="quiz-section" id="quizSection">
@@ -328,7 +332,7 @@
     </div>
 
     <script>
-        const quizData = [
+         const allQuestions = [
             {
                 question: "What is the primary focus of Object-Oriented Programming (OOP)?",
                 options: [
@@ -445,7 +449,7 @@
                     "An abstract class only lists methods but does not have any code.",
                     "An interface provides absolute abstraction and cannot have any method implementations.",
                     "A concrete class cannot extend an abstract class.",
-                    "A concrete class cannot implement an interface."
+                    "An abstract class can have instance variables while an interface cannot."
                 ],
                 correct: 1
             },
@@ -951,22 +955,63 @@
             }
         ];
 
+        const QUESTIONS_PER_TEST = 15;
+        let allQuizTests = [];
+        let currentTest = 0;
         let currentQuestion = 0;
         let answers = {};
         let quizStarted = false;
 
-        function startQuiz() {
+        // Split questions into tests
+        function createTests() {
+            allQuizTests = [];
+            let questionIndex = 0;
+            
+            while (questionIndex < allQuestions.length) {
+                const testQuestions = allQuestions.slice(
+                    questionIndex, 
+                    questionIndex + QUESTIONS_PER_TEST
+                );
+                allQuizTests.push(testQuestions);
+                questionIndex += QUESTIONS_PER_TEST;
+            }
+        }
+
+        function showTestSelection() {
+            document.getElementById('testSelector').style.display = 'block';
+            document.getElementById('startBtn').style.display = 'none';
+            
+            const container = document.getElementById('testButtonsContainer');
+            container.innerHTML = '';
+            
+            allQuizTests.forEach((test, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'start-button';
+                btn.style.width = '100%';
+                btn.textContent = `Test ${index + 1} (${test.length} questions)`;
+                btn.onclick = () => startQuiz(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function startQuiz(testIndex) {
+            currentTest = testIndex;
+            currentQuestion = 0;
+            answers = {};
             quizStarted = true;
+            
             document.getElementById('introSection').classList.remove('active');
             document.getElementById('quizSection').classList.add('active');
             displayQuestion();
         }
 
         function displayQuestion() {
-            const question = quizData[currentQuestion];
+            const currentTestQuestions = allQuizTests[currentTest];
+            const question = currentTestQuestions[currentQuestion];
+            
             document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1}`;
             document.getElementById('questionText').textContent = question.question;
-            document.getElementById('questionCounter').textContent = `${currentQuestion + 1} of ${quizData.length}`;
+            document.getElementById('questionCounter').textContent = `${currentQuestion + 1} of ${currentTestQuestions.length} (Test ${currentTest + 1})`;
 
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
@@ -1003,20 +1048,24 @@
         }
 
         function updateButtonStates() {
+            const currentTestQuestions = allQuizTests[currentTest];
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
 
             prevBtn.disabled = currentQuestion === 0;
-            nextBtn.textContent = currentQuestion === quizData.length - 1 ? 'Submit Quiz' : 'Next →';
+            nextBtn.textContent = currentQuestion === currentTestQuestions.length - 1 ? 'Submit Test' : 'Next →';
         }
 
         function updateProgressBar() {
-            const progress = ((currentQuestion + 1) / quizData.length) * 100;
+            const currentTestQuestions = allQuizTests[currentTest];
+            const progress = ((currentQuestion + 1) / currentTestQuestions.length) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
         }
 
         function nextQuestion() {
-            if (currentQuestion === quizData.length - 1) {
+            const currentTestQuestions = allQuizTests[currentTest];
+            
+            if (currentQuestion === currentTestQuestions.length - 1) {
                 submitQuiz();
                 return;
             }
@@ -1038,23 +1087,24 @@
         }
 
         function submitQuiz() {
+            const currentTestQuestions = allQuizTests[currentTest];
             let correctCount = 0;
 
-            for (let i = 0; i < quizData.length; i++) {
-                if (answers[i] === quizData[i].correct) {
+            for (let i = 0; i < currentTestQuestions.length; i++) {
+                if (answers[i] === currentTestQuestions[i].correct) {
                     correctCount++;
                 }
             }
 
-            displayResults(correctCount);
+            displayResults(correctCount, currentTestQuestions);
         }
 
-        function displayResults(correctCount) {
+        function displayResults(correctCount, currentTestQuestions) {
             document.getElementById('quizSection').classList.remove('active');
             document.getElementById('resultsSection').classList.add('active');
 
-            const percentage = Math.round((correctCount / quizData.length) * 100);
-            document.getElementById('scoreDisplay').textContent = `${correctCount}/${quizData.length} (${percentage}%)`;
+            const percentage = Math.round((correctCount / currentTestQuestions.length) * 100);
+            document.getElementById('scoreDisplay').textContent = `${correctCount}/${currentTestQuestions.length} (${percentage}%)`;
 
             let message = '';
             if (percentage === 100) {
@@ -1074,7 +1124,7 @@
             const detailsContainer = document.getElementById('resultsDetails');
             detailsContainer.innerHTML = '<h3 style="margin-bottom: 15px; color: #333;">Review Your Answers</h3>';
 
-            quizData.forEach((question, index) => {
+            currentTestQuestions.forEach((question, index) => {
                 const resultItem = document.createElement('div');
                 const isCorrect = answers[index] === question.correct;
                 resultItem.className = `result-item ${isCorrect ? 'correct' : 'incorrect'}`;
@@ -1107,11 +1157,16 @@
             document.getElementById('introSection').classList.add('active');
             document.getElementById('quizSection').classList.remove('active');
             document.getElementById('resultsSection').classList.remove('active');
+            document.getElementById('testSelector').style.display = 'none';
+            document.getElementById('startBtn').style.display = 'block';
         }
 
         // Initialize question count on page load
         window.addEventListener('load', () => {
-            document.getElementById('questionCount').textContent = `${quizData.length} questions total`;
+            createTests();
+            const totalTests = allQuizTests.length;
+            const testInfo = allQuizTests.map((test, idx) => `Test ${idx + 1}: ${test.length} questions`).join(' • ');
+            document.getElementById('questionCount').textContent = `${allQuestions.length} questions split into ${totalTests} tests • ${testInfo}`;
         });
     </script>
 </body>
